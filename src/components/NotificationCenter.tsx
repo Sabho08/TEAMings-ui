@@ -22,11 +22,10 @@ const NotificationCenter = () => {
           console.log(`[Intelligence] Node ${user.id} established. Booting neural uplink...`);
           
           try {
-            // 1. Fetch user's current team membership
-            const { data: teamMembers } = await supabase
-              .from('team_members')
-              .select('team_id')
-              .eq('user_id', user.id);
+            // 1. Fetch user's current team membership via server
+            const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+            const response = await fetch(`${API_BASE_URL}/api/memberships/${user.id}`);
+            const teamMembers = await response.json();
 
             const teamIds = teamMembers?.map(m => m.team_id) || [];
 

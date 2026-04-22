@@ -14,6 +14,7 @@ function AppContent({ isLoggedIn, handleLogin, handleLogout }: any) {
   const location = useLocation();
   const isTeamView = location.pathname.startsWith('/team/');
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [theme, setTheme] = useState(() => localStorage.getItem('teamings_theme') || 'dark');
 
   useEffect(() => {
@@ -42,6 +43,29 @@ function AppContent({ isLoggedIn, handleLogin, handleLogout }: any) {
     document.documentElement.className = theme === 'light' ? 'light-mode' : '';
   }, [theme]);
 
+  useEffect(() => {
+    if (currentUser?.id) {
+      const fetchProfile = async () => {
+        try {
+          const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+          const response = await fetch(`${API_BASE_URL}/api/profiles/${currentUser.id}`);
+          if (response.ok) {
+            const data = await response.json();
+            setProfile(data);
+          }
+        } catch (error) {
+          console.error("Global profile fetch failed:", error);
+        }
+      };
+      fetchProfile();
+      
+      // Re-fetch on profile update event
+      const handleProfileUpdate = () => fetchProfile();
+      window.addEventListener('storage', handleProfileUpdate);
+      return () => window.removeEventListener('storage', handleProfileUpdate);
+    }
+  }, [currentUser?.id]);
+
   if (!isLoggedIn) {
     return (
       <Routes>
@@ -51,15 +75,15 @@ function AppContent({ isLoggedIn, handleLogin, handleLogout }: any) {
     );
   }
 
-  const userInitial = currentUser?.user_metadata?.full_name 
-    ? currentUser.user_metadata.full_name.charAt(0).toUpperCase() 
-    : currentUser?.email?.charAt(0).toUpperCase() || 'U';
+  const userInitial = profile?.full_name 
+    ? profile.full_name.charAt(0).toUpperCase() 
+    : currentUser?.user_metadata?.full_name?.charAt(0).toUpperCase() || currentUser?.email?.charAt(0).toUpperCase() || 'U';
   
-  const userName = currentUser?.user_metadata?.full_name || currentUser?.email?.split('@')[0] || 'User';
+  const userName = profile?.full_name || currentUser?.user_metadata?.full_name || currentUser?.email?.split('@')[0] || 'User';
 
   return (
     <div className="flex min-h-screen bg-surface selection:bg-on-surface/10 selection:text-on-surface transition-colors duration-300">
-      {!isTeamView && <Sidebar onLogout={handleLogout} />}
+      {!isTeamView && <Sidebar onLogout={handleLogout} profile={profile} />}
       <div className={`flex-1 flex flex-col min-h-screen relative ${!isTeamView ? 'ml-64' : ''}`}>
         
         {!isTeamView && (
@@ -83,8 +107,8 @@ function AppContent({ isLoggedIn, handleLogin, handleLogout }: any) {
 
               <Link to="/profile" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                 <div className="w-9 h-9 rounded-full border border-outline overflow-hidden flex items-center justify-center transition-all bg-surface-container">
-                  {currentUser?.avatar_url ? (
-                    <img src={currentUser.avatar_url} className="w-full h-full object-cover" alt="Profile" />
+                  {profile?.avatar_url || currentUser?.avatar_url ? (
+                    <img src={profile?.avatar_url || currentUser.avatar_url} className="w-full h-full object-cover" alt="Profile" />
                   ) : (
                     <span className="text-[10px] font-black uppercase text-on-surface-variant">{userInitial}</span>
                   )}

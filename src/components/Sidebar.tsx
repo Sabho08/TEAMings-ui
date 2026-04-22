@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
-const Sidebar = ({ onLogout }: { onLogout: () => void }) => {
+const Sidebar = ({ onLogout, profile }: { onLogout: () => void, profile?: any }) => {
   const location = useLocation();
   const [user, setUser] = useState<any>(null);
 
@@ -26,8 +26,8 @@ const Sidebar = ({ onLogout }: { onLogout: () => void }) => {
     { name: 'Workspace', path: '/', icon: 'dashboard' },
   ];
 
-  const userName = user?.avatar_url ? (user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Operator') : (user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Operator');
-  const userRole = user?.user_metadata?.role || 'User';
+  const userName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Operator';
+  const userRole = profile?.role || user?.user_metadata?.role || 'User';
 
   return (
     <nav className="fixed left-0 top-0 h-full w-64 bg-surface border-r border-outline flex flex-col py-8 px-5 z-50 transition-colors duration-300">
@@ -70,8 +70,8 @@ const Sidebar = ({ onLogout }: { onLogout: () => void }) => {
         <Link to="/profile">
           <div className="flex items-center gap-3 px-2 py-2 group">
             <div className="w-9 h-9 rounded-full border border-outline overflow-hidden bg-surface-container group-hover:border-on-surface transition-colors flex items-center justify-center">
-              {user?.avatar_url ? (
-                <img src={user.avatar_url} className="w-full h-full object-cover" alt="Profile" />
+              {profile?.avatar_url || user?.avatar_url ? (
+                <img src={profile?.avatar_url || user.avatar_url} className="w-full h-full object-cover" alt="Profile" />
               ) : (
                 <span className="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface text-lg">person</span>
               )}
