@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+@theme {
+  /* Dynamic Palette - Linked to CSS Variables */
+  --color-surface: var(--color-surface);
+  --color-on-surface: var(--color-on-surface);
+  --color-surface-container: var(--color-surface-container);
+  --color-outline: var(--color-outline);
+  --color-outline-variant: var(--color-outline-variant);
+
+  --font-display: "Inter", sans-serif;
+  --font-headline: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "Roboto Mono", monospace;
+
+  --radius-DEFAULT: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+}
+
+:root {
+  --color-surface: #000000;
+  --color-surface-container: #09090B;
+  --color-on-surface: #FFFFFF;
+  --color-outline: #27272A;
+  --color-outline-variant: rgba(39, 39, 42, 0.4);
+  --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --theme-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.light-mode {
+  --color-surface: #FFFFFF;
+  --color-surface-container: #F4F4F5;
+  --color-on-surface: #09090B;
+  --color-outline: #E4E4E7;
+  --color-outline-variant: rgba(228, 228, 231, 0.5);
+  --card-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+@layer base {
+  body {
+    @apply font-body antialiased transition-colors duration-300;
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight font-semibold transition-colors duration-300;
+    color: var(--color-on-surface);
+  }
+}
+
+@utility glass {
+  background-color: color-mix(in srgb, var(--color-surface) 80%, transparent);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-outline);
+  box-shadow: var(--card-shadow);
+  transition: var(--theme-transition);
+}
+
+@utility glass-card {
+  background-color: color-mix(in srgb, var(--color-surface-container) 60%, transparent);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  box-shadow: var(--card-shadow);
+  transition: var(--theme-transition);
+}
+
+@layer components {
+  /* Map hardcoded classes to dynamic variables in light mode */
+  .light-mode .bg-black, 
+  .light-mode .bg-zinc-950,
+  .light-mode .bg-zinc-900 {
+    background-color: var(--color-surface) !important;
+  }
+
+  .light-mode .border-zinc-800,
+  .light-mode .border-zinc-900 {
+    border-color: var(--color-outline) !important;
+  }
+
+  .light-mode .text-white {
+    color: var(--color-on-surface) !important;
+  }
+
+  .light-mode .text-zinc-500,
+  .light-mode .text-zinc-600 {
+    color: #71717A !important;
+  }
+}
+
+/* Material Symbols Adjustments */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+  @apply align-middle transition-colors duration-300;
+}
+
+@keyframes grid-ripple {
+    0%, 100% { 
+        transform: scale(1); 
+        opacity: 1; 
+    }
+    50% { 
+        transform: scale(0.8); 
+        opacity: 0.5; 
+    }
+}
+
+.animate-grid-ripple {
+    animation: grid-ripple 2s infinite ease-in-out;
+}
