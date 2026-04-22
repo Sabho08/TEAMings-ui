@@ -27,7 +27,7 @@ const NotificationCenter = () => {
             const response = await fetch(`${API_BASE_URL}/api/memberships/${user.id}`);
             const teamMembers = await response.json();
 
-            const teamIds = teamMembers?.map(m => m.team_id) || [];
+            const teamIds = teamMembers?.map((m: any) => m.team_id) || [];
 
             // 2. Build ONE dynamic channel for all intelligence streams
             // Unique name per session prevents "callback after subscribe" collisions
@@ -68,7 +68,7 @@ const NotificationCenter = () => {
             );
 
             // C. Team Broadcast Filters
-            teamIds.forEach(teamId => {
+            teamIds.forEach((teamId: string) => {
               channel.on(
                 'postgres_changes',
                 { event: 'INSERT', schema: 'public', table: 'messages', filter: `team_id=eq.${teamId}` },
