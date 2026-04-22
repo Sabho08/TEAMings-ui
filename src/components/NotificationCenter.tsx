@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 
@@ -6,14 +6,14 @@ const NotificationCenter = () => {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+
 
   useEffect(() => {
     const rawUser = localStorage.getItem('teamings_user');
     if (rawUser && rawUser !== 'undefined') {
       try {
         const user = JSON.parse(rawUser);
-        setCurrentUser(user);
+
         
         let activeChannel: any = null;
 
